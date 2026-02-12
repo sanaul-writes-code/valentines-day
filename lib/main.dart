@@ -22,19 +22,49 @@ class ValentineHome extends StatefulWidget {
   State<ValentineHome> createState() => _ValentineHomeState();
 }
 
+class Balloon {
+  double x;
+  double y;
+  double speed;
+  Color color;
+
+  Balloon({
+    required this.x,
+    required this.y,
+    required this.speed,
+    required this.color,
+  });
+}
+
 class _ValentineHomeState extends State<ValentineHome>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  List<Balloon> balloons = [];
+  bool _dropBalloons = false;
 
   final List<String> emojiOptions = ['Sweet Heart', 'Party Heart'];
   String selectedEmoji = 'Sweet Heart';
+
   String get currentImage {
     if (selectedEmoji == 'Sweet Heart') {
       return 'assets/images/heart.jpeg';
     } else {
       return 'assets/images/sweetie.jpeg';
     }
+  }
+
+  void _startBalloonDrop() {
+    balloons = List.generate(20, (i) {
+      return Balloon(
+        x: (50 + i * 15).toDouble(),
+        y: -100.0,
+        speed: 1 + (i % 5),
+        color: Colors.primaries[i % Colors.primaries.length],
+      );
+    });
+
+    _dropBalloons = true;
   }
 
   final List<Color> _bgColors = [
@@ -61,6 +91,20 @@ class _ValentineHomeState extends State<ValentineHome>
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _controller.repeat(reverse: true);
+    _controller.addListener(() {
+      if (_dropBalloons) {
+        setState(() {
+          for (var b in balloons) {
+            b.y += b.speed;
+
+            // Reset balloon when it falls off screen
+            if (b.y > 600) {
+              b.y = -50;
+            }
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -128,13 +172,32 @@ class _ValentineHomeState extends State<ValentineHome>
             },
             child: const Text('Colors of Love ❤️'),
           ),
+          const SizedBox(height: 8),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                if (_dropBalloons) {
+                  // Turn OFF balloons
+                  _dropBalloons = false;
+                } else {
+                  // Turn ON balloons
+                  _startBalloonDrop();
+                }
+              });
+            },
+            child: Text(_dropBalloons ? "Stop Balloons ❌" : "Drop Balloons 🎈"),
 
+          ),
           const SizedBox(height: 16),
           Expanded(
             child: Center(
               child: CustomPaint(
                 size: const Size(300, 300),
-                painter: HeartEmojiPainter(type: selectedEmoji),
+                painter: HeartEmojiPainter(
+                  type: selectedEmoji,
+                  balloons: balloons,
+                  dropBalloons: _dropBalloons,
+                ),
               ),
             ),
           ),
@@ -145,13 +208,42 @@ class _ValentineHomeState extends State<ValentineHome>
 }
 
 class HeartEmojiPainter extends CustomPainter {
-  HeartEmojiPainter({required this.type});
+  HeartEmojiPainter({
+    required this.type,
+    required this.balloons,
+    required this.dropBalloons,
+  });
   final String type;
+  final List<Balloon> balloons;
+  final bool dropBalloons;
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final paint = Paint()..style = PaintingStyle.fill;
+
+    if (dropBalloons) {
+      for (var b in balloons) {
+        final balloonPaint = Paint()..color = b.color;
+
+        // Balloon body
+        canvas.drawOval(
+          Rect.fromCenter(center: Offset(b.x, b.y), width: 30, height: 40),
+          balloonPaint,
+        );
+
+        // String
+        final stringPaint = Paint()
+          ..color = Colors.black
+          ..strokeWidth = 2;
+
+        canvas.drawLine(
+          Offset(b.x, b.y + 20),
+          Offset(b.x, b.y + 50),
+          stringPaint,
+        );
+      }
+    }
 
     final heartPath = Path()
       ..moveTo(center.dx, center.dy + 60)
@@ -236,6 +328,9 @@ class HeartEmojiPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant HeartEmojiPainter oldDelegate) =>
-      oldDelegate.type != type;
+  bool shouldRepaint(covariant HeartEmojiPainter oldDelegate) {
+    return oldDelegate.type != type ||
+        oldDelegate.dropBalloons != dropBalloons ||
+        oldDelegate.balloons != balloons;
+  }
 }
