@@ -387,6 +387,49 @@ class HeartEmojiPainter extends CustomPainter {
       canvas.drawCircle(Offset(center.dx - 45, center.dy + 5), 12, blushPaint);
       canvas.drawCircle(Offset(center.dx + 45, center.dy + 5), 12, blushPaint);
     }
+
+    _drawSparkles(canvas, center, size);
+  }
+
+  void _drawSparkles(Canvas canvas, Offset center, Size size) {
+    final sparklePaint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    final sparkles = [
+      Offset(center.dx - 90, center.dy - 40),
+      Offset(center.dx + 90, center.dy - 30),
+      Offset(center.dx - 70, center.dy + 40),
+      Offset(center.dx + 70, center.dy + 50),
+      Offset(center.dx, center.dy - 100),
+    ];
+
+    for (final s in sparkles) {
+      canvas.drawLine(
+        Offset(s.dx - 6, s.dy),
+        Offset(s.dx + 6, s.dy),
+        sparklePaint,
+      );
+      canvas.drawLine(
+        Offset(s.dx, s.dy - 6),
+        Offset(s.dx, s.dy + 6),
+        sparklePaint,
+      );
+      canvas.drawLine(
+        Offset(s.dx - 4, s.dy - 4),
+        Offset(s.dx + 4, s.dy + 4),
+        sparklePaint,
+      );
+      canvas.drawLine(
+        Offset(s.dx - 4, s.dy + 4),
+        Offset(s.dx + 4, s.dy - 4),
+        sparklePaint,
+      );
+
+      final dotPaint = Paint()..color = Colors.white;
+      canvas.drawCircle(s, 2, dotPaint);
+    }
   }
 
   @override
