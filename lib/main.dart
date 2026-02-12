@@ -82,7 +82,7 @@ class _ValentineHomeState extends State<ValentineHome>
       appBar: AppBar(title: const Text('Cupid\'s Canvas')),
       body: Column(
         children: [
-          const SizedBox(height: 16),
+          const SizedBox(height: 50),
           ScaleTransition(
             scale: _animation,
             child: Container(
@@ -96,6 +96,7 @@ class _ValentineHomeState extends State<ValentineHome>
               ),
             ),
           ),
+          const SizedBox(height: 50),
           DropdownButton<String>(
             value: selectedEmoji,
             items: emojiOptions
