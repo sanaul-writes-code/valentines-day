@@ -37,6 +37,16 @@ class _ValentineHomeState extends State<ValentineHome>
     }
   }
 
+
+  final List<Color> _bgColors = [
+    Colors.white,
+    Color(0xFFFFEBEE),
+    Color(0xFFFCE4EC),
+    Color(0xFFFFF0F5),
+    Color(0xFFFFFDE7),
+  ];
+  int _bgIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -48,8 +58,13 @@ class _ValentineHomeState extends State<ValentineHome>
 
     _animation = Tween<double>(
       begin: 1.0,
-      end: 1.15,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+      end: 1.5,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOut,
+      ),
+    );
 
     _controller.repeat(reverse: true);
   }
@@ -63,6 +78,7 @@ class _ValentineHomeState extends State<ValentineHome>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: _bgColors[_bgIndex],
       appBar: AppBar(title: const Text('Cupid\'s Canvas')),
       body: Column(
         children: [
@@ -72,7 +88,7 @@ class _ValentineHomeState extends State<ValentineHome>
             child: Container(
               width: 200,
               height: 200,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(currentImage),
                   fit: BoxFit.cover,
@@ -86,7 +102,8 @@ class _ValentineHomeState extends State<ValentineHome>
                 .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                 .toList(),
             onChanged: (value) {
-              setState(() {
+             
+                setState(() {
                 selectedEmoji = value ?? selectedEmoji;
 
                 if (selectedEmoji == 'Sweet Heart') {
@@ -98,6 +115,23 @@ class _ValentineHomeState extends State<ValentineHome>
                 _controller.repeat(reverse: true);
               });
             },
+          ),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFE91E63),
+              foregroundColor: Colors.white,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              textStyle:
+                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            onPressed: () {
+              setState(() {
+                _bgIndex = (_bgIndex + 1) % _bgColors.length;
+              });
+            },
+            child: const Text('Colors of Love ❤️'),
           ),
 
           const SizedBox(height: 16),
@@ -124,7 +158,6 @@ class HeartEmojiPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final paint = Paint()..style = PaintingStyle.fill;
 
-    // Heart base
     final heartPath = Path()
       ..moveTo(center.dx, center.dy + 60)
       ..cubicTo(
@@ -150,7 +183,6 @@ class HeartEmojiPainter extends CustomPainter {
         : const Color(0xFFE91E63);
     canvas.drawPath(heartPath, paint);
 
-    // Face features (starter)
     final eyePaint = Paint()..color = Colors.white;
     canvas.drawCircle(Offset(center.dx - 30, center.dy - 10), 10, eyePaint);
     canvas.drawCircle(Offset(center.dx + 30, center.dy - 10), 10, eyePaint);
