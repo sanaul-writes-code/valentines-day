@@ -1,16 +1,13 @@
-# valentine
+# ❤️ Valentine’s Day Flutter App
 
-A new Flutter project.
+A simple Flutter project featuring custom‑drawn heart emojis, animations, and festive effects.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **Emoji Selector:** Switch between Sweet Heart and Party Heart.
+- **Pulse Animation:** Heart image gently scales using `ScaleTransition`.
+- **Balloon Drop:** Toggle falling balloons behind the heart.
+- **Confetti Effects:** Multi‑shape confetti for the Party Heart.
+- **Gradient Backgrounds:** “Colors of Love” button cycles radial gradients.
+- **Gradient Heart Fill:** Heart emoji uses a linear gradient shader.
+- **CustomPainter Artwork:** Heart, face, blush, hat, confetti, and balloons drawn manually.
