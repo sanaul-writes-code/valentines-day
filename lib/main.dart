@@ -67,14 +67,39 @@ class _ValentineHomeState extends State<ValentineHome>
     _dropBalloons = true;
   }
 
-  final List<Color> _bgColors = [
-    Colors.white,
-    Color(0xFFFFEBEE),
-    Color(0xFFFCE4EC),
-    Color(0xFFFFF0F5),
-    Color(0xFFFFFDE7),
-  ];
+  // Replaced solid background color list in favor of a list of gradients
+  // final List<Color> _bgColors = [
+  //   Colors.white,
+  //   Color(0xFFFFEBEE),
+  //   Color(0xFFFCE4EC),
+  //   Color(0xFFFFF0F5),
+  //   Color(0xFFFFFDE7),
+  // ];
+
   int _bgIndex = 0;
+
+  final List<Gradient> _bgGradients = [
+    const RadialGradient(
+      center: Alignment(0, -0.3),
+      radius: 1.2,
+      colors: [Color(0xFFFFC1D6), Color(0xFFE91E63)],
+    ),
+    const RadialGradient(
+      center: Alignment(0, -0.3),
+      radius: 1.2,
+      colors: [Color(0xFFFFF0F5), Color(0xFFFF80AB)],
+    ),
+    const RadialGradient(
+      center: Alignment(0, -0.3),
+      radius: 1.2,
+      colors: [Color(0xFFFCE4EC), Color(0xFFEC407A)],
+    ),
+    const RadialGradient(
+      center: Alignment(0, -0.3),
+      radius: 1.2,
+      colors: [Color(0xFFFFEBEE), Color(0xFFD81B60)],
+    ),
+  ];
 
   @override
   void initState() {
@@ -116,91 +141,99 @@ class _ValentineHomeState extends State<ValentineHome>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _bgColors[_bgIndex],
+      // backgroundColor: _bgColors[_bgIndex], removed to implement gradient instead
       appBar: AppBar(title: const Text('Cupid\'s Canvas')),
-      body: Column(
-        children: [
-          const SizedBox(height: 50),
-          ScaleTransition(
-            scale: _animation,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(currentImage),
-                  fit: BoxFit.cover,
+      body: Container(
+        decoration: BoxDecoration(gradient: _bgGradients[_bgIndex]),
+        child: Column(
+          children: [
+            const SizedBox(height: 50),
+            ScaleTransition(
+              scale: _animation,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(currentImage),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 50),
-          DropdownButton<String>(
-            value: selectedEmoji,
-            items: emojiOptions
-                .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                .toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedEmoji = value ?? selectedEmoji;
+            const SizedBox(height: 50),
+            DropdownButton<String>(
+              value: selectedEmoji,
+              items: emojiOptions
+                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedEmoji = value ?? selectedEmoji;
 
-                if (selectedEmoji == 'Sweet Heart') {
-                  _controller.duration = const Duration(milliseconds: 1200);
-                } else if (selectedEmoji == 'Party Heart') {
-                  _controller.duration = const Duration(milliseconds: 500);
-                }
+                  if (selectedEmoji == 'Sweet Heart') {
+                    _controller.duration = const Duration(milliseconds: 1200);
+                  } else if (selectedEmoji == 'Party Heart') {
+                    _controller.duration = const Duration(milliseconds: 500);
+                  }
 
-                _controller.repeat(reverse: true);
-              });
-            },
-          ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE91E63),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              textStyle: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+                  _controller.repeat(reverse: true);
+                });
+              },
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFE91E63),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  _bgIndex = (_bgIndex + 1) % _bgGradients.length;
+                });
+              },
+              child: const Text('Colors of Love ❤️'),
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  if (_dropBalloons) {
+                    // Turn OFF balloons
+                    _dropBalloons = false;
+                  } else {
+                    // Turn ON balloons
+                    _startBalloonDrop();
+                  }
+                });
+              },
+              child: Text(
+                _dropBalloons ? "Stop Balloons ❌" : "Drop Balloons 🎈",
               ),
             ),
-            onPressed: () {
-              setState(() {
-                _bgIndex = (_bgIndex + 1) % _bgColors.length;
-              });
-            },
-            child: const Text('Colors of Love ❤️'),
-          ),
-          const SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                if (_dropBalloons) {
-                  // Turn OFF balloons
-                  _dropBalloons = false;
-                } else {
-                  // Turn ON balloons
-                  _startBalloonDrop();
-                }
-              });
-            },
-            child: Text(_dropBalloons ? "Stop Balloons ❌" : "Drop Balloons 🎈"),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: Center(
-              child: CustomPaint(
-                size: const Size(300, 300),
-                painter: HeartEmojiPainter(
-                  type: selectedEmoji,
-                  balloons: balloons,
-                  dropBalloons: _dropBalloons,
+            const SizedBox(height: 16),
+            Expanded(
+              child: Center(
+                child: CustomPaint(
+                  size: const Size(300, 300),
+                  painter: HeartEmojiPainter(
+                    type: selectedEmoji,
+                    balloons: balloons,
+                    dropBalloons: _dropBalloons,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
