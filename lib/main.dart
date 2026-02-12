@@ -88,7 +88,7 @@ class _ValentineHomeState extends State<ValentineHome>
             child: Container(
               width: 200,
               height: 200,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(currentImage),
                   fit: BoxFit.cover,
