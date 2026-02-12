@@ -252,6 +252,37 @@ class HeartEmojiPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
+
+    // Love Trail: faint glowing heart outline behind the main emoji
+    final glowPaint = Paint()
+      ..color = Color.fromARGB(255, 166, 3, 178).withValues(alpha: 0.90)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 12
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 20);
+
+    // Slightly larger heart path for the glow
+    final glowPath = Path()
+      ..moveTo(center.dx, center.dy + 70)
+      ..cubicTo(
+        center.dx + 120,
+        center.dy - 10,
+        center.dx + 70,
+        center.dy - 140,
+        center.dx,
+        center.dy - 50,
+      )
+      ..cubicTo(
+        center.dx - 70,
+        center.dy - 140,
+        center.dx - 120,
+        center.dy - 10,
+        center.dx,
+        center.dy + 70,
+      )
+      ..close();
+
+    canvas.drawPath(glowPath, glowPaint);
+
     final paint = Paint()..style = PaintingStyle.fill;
 
     if (dropBalloons) {
