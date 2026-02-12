@@ -37,7 +37,6 @@ class _ValentineHomeState extends State<ValentineHome>
     }
   }
 
-
   final List<Color> _bgColors = [
     Colors.white,
     Color(0xFFFFEBEE),
@@ -59,12 +58,7 @@ class _ValentineHomeState extends State<ValentineHome>
     _animation = Tween<double>(
       begin: 1.0,
       end: 1.5,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
-    );
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _controller.repeat(reverse: true);
   }
@@ -103,8 +97,7 @@ class _ValentineHomeState extends State<ValentineHome>
                 .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                 .toList(),
             onChanged: (value) {
-             
-                setState(() {
+              setState(() {
                 selectedEmoji = value ?? selectedEmoji;
 
                 if (selectedEmoji == 'Sweet Heart') {
@@ -122,10 +115,11 @@ class _ValentineHomeState extends State<ValentineHome>
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFE91E63),
               foregroundColor: Colors.white,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              textStyle:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              textStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             onPressed: () {
               setState(() {
@@ -209,6 +203,35 @@ class HeartEmojiPainter extends CustomPainter {
         ..lineTo(center.dx + 40, center.dy - 40)
         ..close();
       canvas.drawPath(hatPath, hatPaint);
+
+      final confettiPaint = Paint()..style = PaintingStyle.fill;
+      final confettiOffsets = [
+        Offset(center.dx - 80, center.dy - 80),
+        Offset(center.dx + 70, center.dy - 70),
+        Offset(center.dx - 90, center.dy + 20),
+        Offset(center.dx + 85, center.dy + 10),
+        Offset(center.dx - 40, center.dy + 90),
+        Offset(center.dx + 40, center.dy + 95),
+      ];
+      final confettiColors = [
+        Colors.yellow,
+        Colors.blue,
+        Colors.green,
+        Colors.orange,
+        Colors.purple,
+        Colors.red,
+      ];
+      for (int i = 0; i < confettiOffsets.length; i++) {
+        confettiPaint.color = confettiColors[i % confettiColors.length];
+        canvas.drawCircle(confettiOffsets[i], 6, confettiPaint);
+      }
+    }
+
+    if (type == 'Sweet Heart') {
+      final blushPaint = Paint()..color = const Color(0xFFFFC1CC);
+
+      canvas.drawCircle(Offset(center.dx - 45, center.dy + 5), 12, blushPaint);
+      canvas.drawCircle(Offset(center.dx + 45, center.dy + 5), 12, blushPaint);
     }
   }
 
