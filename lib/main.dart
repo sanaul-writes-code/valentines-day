@@ -22,12 +22,21 @@ class ValentineHome extends StatefulWidget {
   State<ValentineHome> createState() => _ValentineHomeState();
 }
 
-class _ValentineHomeState extends State<ValentineHome> with SingleTickerProviderStateMixin {
+class _ValentineHomeState extends State<ValentineHome>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
   final List<String> emojiOptions = ['Sweet Heart', 'Party Heart'];
   String selectedEmoji = 'Sweet Heart';
+  String get currentImage {
+    if (selectedEmoji == 'Sweet Heart') {
+      return 'assets/images/heart.jpeg';
+    } else {
+      return 'assets/images/sweetie.jpeg';
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -40,16 +49,10 @@ class _ValentineHomeState extends State<ValentineHome> with SingleTickerProvider
     _animation = Tween<double>(
       begin: 1.0,
       end: 1.15,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
-    );
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _controller.repeat(reverse: true);
   }
-
 
   @override
   void dispose() {
@@ -59,20 +62,19 @@ class _ValentineHomeState extends State<ValentineHome> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(title: const Text('Cupid\'s Canvas')),
       body: Column(
         children: [
           const SizedBox(height: 16),
-          ScaleTransition( 
-            scale: _animation, 
+          ScaleTransition(
+            scale: _animation,
             child: Container(
               width: 200,
               height: 200,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/heart.jpeg'),
+                  image: AssetImage(currentImage),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -83,8 +85,21 @@ class _ValentineHomeState extends State<ValentineHome> with SingleTickerProvider
             items: emojiOptions
                 .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                 .toList(),
-            onChanged: (value) => setState(() => selectedEmoji = value ?? selectedEmoji),
+            onChanged: (value) {
+              setState(() {
+                selectedEmoji = value ?? selectedEmoji;
+
+                if (selectedEmoji == 'Sweet Heart') {
+                  _controller.duration = const Duration(milliseconds: 1200);
+                } else if (selectedEmoji == 'Party Heart') {
+                  _controller.duration = const Duration(milliseconds: 500);
+                }
+
+                _controller.repeat(reverse: true);
+              });
+            },
           ),
+
           const SizedBox(height: 16),
           Expanded(
             child: Center(
@@ -112,11 +127,27 @@ class HeartEmojiPainter extends CustomPainter {
     // Heart base
     final heartPath = Path()
       ..moveTo(center.dx, center.dy + 60)
-      ..cubicTo(center.dx + 110, center.dy - 10, center.dx + 60, center.dy - 120, center.dx, center.dy - 40)
-      ..cubicTo(center.dx - 60, center.dy - 120, center.dx - 110, center.dy - 10, center.dx, center.dy + 60)
+      ..cubicTo(
+        center.dx + 110,
+        center.dy - 10,
+        center.dx + 60,
+        center.dy - 120,
+        center.dx,
+        center.dy - 40,
+      )
+      ..cubicTo(
+        center.dx - 60,
+        center.dy - 120,
+        center.dx - 110,
+        center.dy - 10,
+        center.dx,
+        center.dy + 60,
+      )
       ..close();
 
-    paint.color = type == 'Party Heart' ? const Color(0xFFF48FB1) : const Color(0xFFE91E63);
+    paint.color = type == 'Party Heart'
+        ? const Color(0xFFF48FB1)
+        : const Color(0xFFE91E63);
     canvas.drawPath(heartPath, paint);
 
     // Face features (starter)
@@ -128,7 +159,13 @@ class HeartEmojiPainter extends CustomPainter {
       ..color = Colors.black
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4;
-    canvas.drawArc(Rect.fromCircle(center: Offset(center.dx, center.dy + 20), radius: 30), 0, 3.14, false, mouthPaint);
+    canvas.drawArc(
+      Rect.fromCircle(center: Offset(center.dx, center.dy + 20), radius: 30),
+      0,
+      3.14,
+      false,
+      mouthPaint,
+    );
 
     // Party hat placeholder (expand for confetti)
     if (type == 'Party Heart') {
@@ -143,5 +180,6 @@ class HeartEmojiPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant HeartEmojiPainter oldDelegate) => oldDelegate.type != type;
+  bool shouldRepaint(covariant HeartEmojiPainter oldDelegate) =>
+      oldDelegate.type != type;
 }
