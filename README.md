@@ -11,3 +11,4 @@ A simple Flutter project featuring custom‑drawn heart emojis, animations, and 
 - **Gradient Backgrounds:** “Colors of Love” button cycles radial gradients.
 - **Gradient Heart Fill:** Heart emoji uses a linear gradient shader.
 - **CustomPainter Artwork:** Heart, face, blush, hat, confetti, and balloons drawn manually.
+- **Sparkles:** Animated star‑burst sparkles drawn around the heart. - **Love Trail Glow:** Soft glowing heart outline behind the emoji.
