@@ -186,7 +186,6 @@ class _ValentineHomeState extends State<ValentineHome>
               });
             },
             child: Text(_dropBalloons ? "Stop Balloons ❌" : "Drop Balloons 🎈"),
-
           ),
           const SizedBox(height: 16),
           Expanded(
@@ -297,6 +296,8 @@ class HeartEmojiPainter extends CustomPainter {
       canvas.drawPath(hatPath, hatPaint);
 
       final confettiPaint = Paint()..style = PaintingStyle.fill;
+
+      //Confetti positions around heart
       final confettiOffsets = [
         Offset(center.dx - 80, center.dy - 80),
         Offset(center.dx + 70, center.dy - 70),
@@ -304,7 +305,12 @@ class HeartEmojiPainter extends CustomPainter {
         Offset(center.dx + 85, center.dy + 10),
         Offset(center.dx - 40, center.dy + 90),
         Offset(center.dx + 40, center.dy + 95),
+        Offset(center.dx, center.dy - 120),
+        Offset(center.dx + 120, center.dy),
+        Offset(center.dx - 120, center.dy),
       ];
+
+      // Cofetti colors list
       final confettiColors = [
         Colors.yellow,
         Colors.blue,
@@ -312,10 +318,33 @@ class HeartEmojiPainter extends CustomPainter {
         Colors.orange,
         Colors.purple,
         Colors.red,
+        Colors.cyan,
+        Colors.pink,
       ];
+
       for (int i = 0; i < confettiOffsets.length; i++) {
         confettiPaint.color = confettiColors[i % confettiColors.length];
-        canvas.drawCircle(confettiOffsets[i], 6, confettiPaint);
+        final pos = confettiOffsets[i];
+        // Alternate shapes: circle → square → triangle
+        switch (i % 3) {
+          case 0: // Circle confetti
+            canvas.drawCircle(pos, 6, confettiPaint);
+            break;
+          case 1: // Square confetti
+            canvas.drawRect(
+              Rect.fromCenter(center: pos, width: 10, height: 10),
+              confettiPaint,
+            );
+            break;
+          case 2: // Triangle confetti
+            final triangle = Path()
+              ..moveTo(pos.dx, pos.dy - 6)
+              ..lineTo(pos.dx - 6, pos.dy + 6)
+              ..lineTo(pos.dx + 6, pos.dy + 6)
+              ..close();
+            canvas.drawPath(triangle, confettiPaint);
+            break;
+        }
       }
     }
 
